@@ -1,0 +1,23 @@
+# Binaries
+bin/
+
+# Configuration files
+.env
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Log files
+*.log
+
+# Test output files
+test.out
+
+# Vendor directory
+vendor/
+
+# IDE files
+.idea/
+.vscode/
