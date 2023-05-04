@@ -1,26 +1,34 @@
 package controllers
 
 import (
-	"e-shop-fiber/internal/api/models"
+	"net/http"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/your_project/internal/api/services"
 )
 
 type ProductController struct {
-	productModel *models.ProductModel
+	productService services.ProductService
 }
 
-func NewProductController() *ProductController {
-	return &ProductController{
-		productModel: models.NewProductModel(),
+func NewProductController(productService services.ProductService) *ProductController {
+	return &ProductController{productService: productService}
+}
+
+func (c *ProductController) GetAllProducts(ctx *fiber.Ctx) error {
+	products, err := c.productService.GetAllProducts()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch products"})
 	}
+	return ctx.Status(http.StatusOK).JSON(products)
 }
 
-func (p *ProductController) List(c *fiber.Ctx) error {
-	// Implement listing products logic here
-	return c.JSON(fiber.Map{"message": "Products listed"})
-}
-
-func (p *ProductController) Get(c *fiber.Ctx) error {
-	// Implement getting single product details logic here
-	return c.JSON(fiber.Map{"message": "Product details fetched"})
+func (c *ProductController) GetProductByID(ctx *fiber.Ctx) error {
+	id, _ := strconv.Atoi(ctx.Params("id"))
+	product, err := c.productService.GetProductByID(uint(id))
+	if err != nil {
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
+	}
+	return ctx.Status(http.StatusOK).JSON(product)
 }
